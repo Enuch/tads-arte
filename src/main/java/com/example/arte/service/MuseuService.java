@@ -1,10 +1,12 @@
 package com.example.arte.service;
 
+import com.example.arte.DTO.response.MuseuResponseDTO;
 import com.example.arte.model.Museu;
 import com.example.arte.repository.MuseuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -47,8 +49,12 @@ public class MuseuService {
         return museuRepository.findAllByDeletedIsNullAndId(id);
     }
 
-    public List<Museu> findAll() {
-        return museuRepository.findAllByDeletedIsNull();
+    public List<MuseuResponseDTO> findAll() {
+        ArrayList<MuseuResponseDTO> museuResponseDTOS = new ArrayList<>();
+        for (Museu museu: museuRepository.findAllByDeletedIsNull()) {
+            museuResponseDTOS.add(new MuseuResponseDTO(museu));
+        }
+        return museuResponseDTOS;
     }
 
 }

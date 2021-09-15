@@ -1,5 +1,8 @@
 package com.example.arte.controller;
 
+import com.example.arte.DTO.request.AutorRequestDTO;
+import com.example.arte.DTO.response.AutorResponseDTO;
+import com.example.arte.DTO.response.ObraResponseDTO;
 import com.example.arte.model.Autor;
 import com.example.arte.service.AutorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,26 +25,26 @@ public class AutorController {
     }
 
     @GetMapping
-    public List<Autor> findAll() {
+    public List<AutorResponseDTO> findAll() {
         return autorService.findAll();
     }
 
     @GetMapping(path = {"/{id}"})
-    public ResponseEntity<Autor> findById(@PathVariable Long id) {
+    public ResponseEntity<AutorResponseDTO> findById(@PathVariable Long id) {
 
         Optional<Autor> autorOptional = autorService.findById(id);
 
         if (autorOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok().body(autorOptional.get());
+            return ResponseEntity.ok().body(new AutorResponseDTO(autorOptional.get()));
         }
     }
 
     @PostMapping
-    public ResponseEntity<Autor> insert(@RequestBody Autor autor) {
-        autorService.insert(autor);
-        return ResponseEntity.created(URI.create("/autor" + autor.getId() )).body(autor);
+    public ResponseEntity<AutorResponseDTO> insert(@RequestBody AutorRequestDTO autorDTO) {
+        Autor autor = autorService.insert(autorDTO.build());
+        return ResponseEntity.created(URI.create("/autor" + autor.getId() )).body(new AutorResponseDTO(autor));
     }
 
     @PutMapping(path = {"/editar/{id}"})
@@ -51,7 +54,7 @@ public class AutorController {
 
                    if (record.getId().equals(autor.getId())) {
                        autorService.saveAndFlush(record);
-                       return ResponseEntity.ok(autor);
+                       return ResponseEntity.ok(new AutorResponseDTO(autor));
                    } else {
                        return ResponseEntity.notFound().build();
                    }

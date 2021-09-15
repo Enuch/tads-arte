@@ -1,5 +1,7 @@
 package com.example.arte.controller;
 
+import com.example.arte.DTO.request.ObraRequestDTO;
+import com.example.arte.DTO.response.ObraResponseDTO;
 import com.example.arte.model.Autor;
 import com.example.arte.model.Obra;
 import com.example.arte.service.ObraService;
@@ -23,25 +25,25 @@ public class ObraController {
     }
 
     @GetMapping
-    public List<Obra> findAll() {
+    public List<ObraResponseDTO> findAll() {
         return obraService.findAll();
     }
 
     @GetMapping(path = {"/{id}"})
-    public ResponseEntity<Obra> findById(@PathVariable Long id) {
+    public ResponseEntity<ObraResponseDTO> findById(@PathVariable Long id) {
         Optional<Obra> obraOptional = obraService.findById(id);
 
         if (obraOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok().body(obraOptional.get());
+            return ResponseEntity.ok().body(new ObraResponseDTO(obraOptional.get()));
         }
     }
 
     @PostMapping
-    public ResponseEntity<Obra> insert(@RequestBody Obra obra) {
-        obraService.insert(obra);
-        return ResponseEntity.created(URI.create("/obra" + obra.getId() )).body(obra);
+    public ResponseEntity<ObraResponseDTO> insert(@RequestBody ObraRequestDTO obraDTO) {
+        Obra obra = obraService.insert(obraDTO.build());
+        return ResponseEntity.created(URI.create("/obra" + obra.getId() )).body(new ObraResponseDTO(obra));
     }
 
     @PutMapping(path = {"/editar/{id}"})
@@ -51,7 +53,7 @@ public class ObraController {
 
                     if (record.getId().equals(obra.getId())) {
                         obraService.saveAndFlush(obra);
-                        return ResponseEntity.ok(obra);
+                        return ResponseEntity.ok(new ObraResponseDTO(obra));
                     } else {
                         return ResponseEntity.notFound().build();
                     }

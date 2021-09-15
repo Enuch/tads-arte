@@ -1,5 +1,7 @@
 package com.example.arte.controller;
 
+import com.example.arte.DTO.request.MuseuRequestDTO;
+import com.example.arte.DTO.response.MuseuResponseDTO;
 import com.example.arte.model.Autor;
 import com.example.arte.model.Museu;
 import com.example.arte.service.MuseuService;
@@ -23,25 +25,25 @@ public class MuseuController {
     }
 
     @GetMapping
-    public List<Museu> findAll() {
+    public List<MuseuResponseDTO> findAll() {
         return museuService.findAll();
     }
 
     @GetMapping(path = {"/{id}"})
-    public ResponseEntity<Museu> findById(@PathVariable Long id) {
+    public ResponseEntity<MuseuResponseDTO> findById(@PathVariable Long id) {
         Optional<Museu> museuOptional = museuService.findById(id);
 
         if (museuOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok().body(museuOptional.get());
+            return ResponseEntity.ok().body(new MuseuResponseDTO(museuOptional.get()));
         }
     }
 
     @PostMapping
-    public ResponseEntity<Museu> insert(@RequestBody Museu museu) {
-        museuService.insert(museu);
-        return ResponseEntity.created(URI.create("/museu" + museu.getId() )).body(museu);
+    public ResponseEntity<MuseuResponseDTO> insert(@RequestBody MuseuRequestDTO museuDTO) {
+        Museu museu = museuService.insert(museuDTO.build());
+        return ResponseEntity.created(URI.create("/museu" + museu.getId() )).body(new MuseuResponseDTO(museu));
     }
 
     @PutMapping(path = {"/editar/{id}"})
@@ -51,7 +53,7 @@ public class MuseuController {
 
                     if (record.getId().equals(museu.getId())) {
                         museuService.saveAndFlush(museu);
-                        return ResponseEntity.ok(museu);
+                        return ResponseEntity.ok(new MuseuResponseDTO(museu));
                     } else {
                         return ResponseEntity.notFound().build();
                     }
