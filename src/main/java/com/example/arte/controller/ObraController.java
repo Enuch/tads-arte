@@ -1,5 +1,6 @@
 package com.example.arte.controller;
 
+import com.example.arte.model.Autor;
 import com.example.arte.model.Obra;
 import com.example.arte.service.ObraService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,30 @@ public class ObraController {
     public ResponseEntity<Obra> insert(@RequestBody Obra obra) {
         obraService.insert(obra);
         return ResponseEntity.created(URI.create("/obra" + obra.getId() )).body(obra);
+    }
+
+    @PutMapping(path = {"/editar/{id}"})
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Obra obra) {
+        return obraService.findById(id)
+                .map( record -> {
+
+                    if (record.getId().equals(obra.getId())) {
+                        obraService.saveAndFlush(obra);
+                        return ResponseEntity.ok(obra);
+                    } else {
+                        return ResponseEntity.notFound().build();
+                    }
+
+                }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping(path = {"/deletar/{id}"})
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return obraService.findById(id)
+                .map( record -> {
+                    obraService.delete(record);
+                    return ResponseEntity.ok("Deletado com sucesso");
+                }).orElse(ResponseEntity.notFound().build());
     }
 
 }

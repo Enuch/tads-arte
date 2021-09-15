@@ -7,20 +7,37 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Museu implements Serializable {
+@Table(name = "museu")
+public class Museu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "museu_id", nullable = false)
     private Long id;
-    private Date deleted;
+
+    @Column(name = "nome")
     private String nome;
-    private String localidade;
+
+    @Column(name = "localizacao")
+    private String localizacao;
+
+    @Column(name = "descricao")
     private String descricao;
+
+    @Column(name = "data")
+    private Date data;
+
+    @Column(name = "deleted")
+    private java.util.Date deleted;
+
+    @OneToMany(mappedBy = "museu", cascade = CascadeType.MERGE, orphanRemoval = true)
+    private List<Obra> obras;
+
 }

@@ -44,13 +44,29 @@ public class AutorController {
         return ResponseEntity.created(URI.create("/autor" + autor.getId() )).body(autor);
     }
 
-//    @PutMapping
-//    public Autor update(@PathVariable Long id, @RequestBody Autor autor) {
-//        return autorService.findById(id)
-//                .map( record -> {
-//                    autorService.delete(record);
-//                    return ResponseEntity.status(202).build();
-//                }).orElse(ResponseEntity.notFound().build());
-//    }
+    @PutMapping(path = {"/editar/{id}"})
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Autor autor) {
+       return autorService.findById(id)
+               .map( record -> {
+
+                   if (record.getId().equals(autor.getId())) {
+                       autorService.saveAndFlush(record);
+                       return ResponseEntity.ok(autor);
+                   } else {
+                       return ResponseEntity.notFound().build();
+                   }
+
+               }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping(path = {"/deletar/{id}"})
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return autorService.findById(id)
+                .map( record -> {
+                        autorService.delete(record);
+                        return ResponseEntity.ok("Deletado com sucesso");
+                }).orElse(ResponseEntity.notFound().build());
+    }
+
 
 }

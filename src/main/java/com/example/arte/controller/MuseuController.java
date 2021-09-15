@@ -1,5 +1,6 @@
 package com.example.arte.controller;
 
+import com.example.arte.model.Autor;
 import com.example.arte.model.Museu;
 import com.example.arte.service.MuseuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,29 @@ public class MuseuController {
     public ResponseEntity<Museu> insert(@RequestBody Museu museu) {
         museuService.insert(museu);
         return ResponseEntity.created(URI.create("/museu" + museu.getId() )).body(museu);
+    }
+
+    @PutMapping(path = {"/editar/{id}"})
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Museu museu) {
+        return museuService.findById(id)
+                .map( record -> {
+
+                    if (record.getId().equals(museu.getId())) {
+                        museuService.saveAndFlush(museu);
+                        return ResponseEntity.ok(museu);
+                    } else {
+                        return ResponseEntity.notFound().build();
+                    }
+
+                }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping(path = {"/deletar/{id}"})
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return museuService.findById(id)
+                .map( record -> {
+                    museuService.delete(record);
+                    return ResponseEntity.ok("Deletado com sucesso");
+                }).orElse(ResponseEntity.notFound().build());
     }
 }

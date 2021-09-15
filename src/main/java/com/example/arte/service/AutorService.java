@@ -5,6 +5,7 @@ import com.example.arte.repository.AutorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,8 @@ public class AutorService {
     }
 
     public void delete(Autor autor) {
-        autorRepository.deleteById(autor.getId());
+        autor.setDeleted(new Date());
+        autorRepository.save(autor);
     }
 
     public Autor getById(Long id) {
@@ -42,11 +44,11 @@ public class AutorService {
     }
 
     public Optional<Autor> findById(Long id) {
-        return autorRepository.findById(id);
+        return autorRepository.findAllByDeletedIsNullAndId(id);
     }
 
     public List<Autor> findAll() {
-        return autorRepository.findAll();
+        return autorRepository.findAllByDeletedIsNull();
     }
 
 }

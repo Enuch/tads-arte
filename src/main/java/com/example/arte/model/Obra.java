@@ -12,14 +12,34 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Obra implements Serializable {
+@Table(name = "obra")
+public class Obra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "obra_id", nullable = false)
     private Long id;
-    private Date deleted;
+
+    @Column(name = "nome")
     private String nome;
+
+    @Column(name = "ano")
     private Date ano;
+
+    @Column(name = "tipo")
     private String tipo;
 
+    @Column(name = "epoca")
+    private String epoca;
+
+    @Column(name = "deleted")
+    private  Date deleted;
+
+    @OneToOne(cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JoinColumn(name = "autor_id")
+    private Autor autor;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "museu_id")
+    private Museu museu;
 }

@@ -5,6 +5,7 @@ import com.example.arte.repository.ObraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,8 @@ public class ObraService {
     }
 
     public void delete(Obra obra) {
-        obraRepository.deleteById(obra.getId());
+        obra.setDeleted(new Date());
+        obraRepository.save(obra);
     }
 
     public Obra getById(Long id) {
@@ -42,10 +44,10 @@ public class ObraService {
     }
 
     public Optional<Obra> findById(Long id) {
-        return obraRepository.findById(id);
+        return obraRepository.findAllByDeletedIsNullAndId(id);
     }
 
     public List<Obra> findAll() {
-        return obraRepository.findAll();
+        return obraRepository.findAllByDeletedIsNull();
     }
 }

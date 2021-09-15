@@ -5,6 +5,7 @@ import com.example.arte.repository.MuseuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,8 @@ public class MuseuService {
     }
 
     public void delete(Museu museu) {
-        museuRepository.deleteById(museu.getId());
+        museu.setDeleted(new Date());
+        museuRepository.save(museu);
     }
 
     public Museu getById(Long id) {
@@ -42,11 +44,11 @@ public class MuseuService {
     }
 
     public Optional<Museu> findById(Long id) {
-        return museuRepository.findById(id);
+        return museuRepository.findAllByDeletedIsNullAndId(id);
     }
 
     public List<Museu> findAll() {
-        return museuRepository.findAll();
+        return museuRepository.findAllByDeletedIsNull();
     }
 
 }

@@ -13,14 +13,29 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "autor")
 public class Autor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "autor_id", nullable = false)
     private Long id;
-    private Date deleted;
+
+    @Column(name = "nome")
     private String nome;
+
+    @Column(name = "idade")
     private Integer idade;
+
+    @Column(name = "epoca")
     private String epoca;
+
+    @Column(name = "nascimento")
     private Date nascimento;
+
+    @Column(name = "biografia")
+    private String biografia;
+
+    @Column(name = "deleted")
+    private  Date deleted;
 
 }
